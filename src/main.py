@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 import time
 from typing import Any
@@ -30,36 +30,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-# Short-circuit OPTIONS preflight requests early to avoid any redirect
-# or auth middleware interference. This will return a 204 and echo
-# the request origin when allowed by `settings.CORS_ORIGINS`.
-@app.middleware("http")
-async def options_preflight_middleware(request: Request, call_next):
-    if request.method == "OPTIONS":
-        origin = request.headers.get("origin")
-        allowed = settings.CORS_ORIGINS or []
-
-        # Determine Access-Control-Allow-Origin value
-        if origin and ("*" in allowed or origin in allowed):
-            ac_allow_origin = origin
-        elif "*" in allowed:
-            ac_allow_origin = "*"
-        else:
-            # No matching origin; still respond with 204 without ACAO
-            ac_allow_origin = None
-
-        headers = {
-            "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
-            "Access-Control-Allow-Headers": "Authorization,Content-Type,Accept",
-            "Access-Control-Allow-Credentials": "true",
-        }
-        if ac_allow_origin:
-            headers["Access-Control-Allow-Origin"] = ac_allow_origin
-
-        return Response(status_code=204, headers=headers)
-
 
 
 # Logging Middleware

@@ -26,14 +26,10 @@ class Settings:
     DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
 
     # CORS
-    # Default local development origins. If a production FRONTEND_URL
-    # environment variable is set (e.g. your Vercel frontend URL), include it.
-    _default_origins = [
+    CORS_ORIGINS: list[str] = [
         "http://localhost:3000",  # Next.js frontend default port
         "http://127.0.0.1:3000",
     ]
-    _prod_origin = os.getenv("FRONTEND_URL")
-    CORS_ORIGINS: list[str] = _default_origins + ([_prod_origin] if _prod_origin else [])
 
     # Cookie settings
     COOKIE_NAME: str = "token"
