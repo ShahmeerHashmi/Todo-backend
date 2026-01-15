@@ -25,6 +25,9 @@ class Settings:
     APP_VERSION: str = "0.1.0"
     DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
 
+    # Frontend URL (used to determine cookie behavior in prod)
+    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "")
+
     # CORS
     CORS_ORIGINS: list[str] = [
         "http://localhost:3000",  # Next.js frontend default port
@@ -35,9 +38,14 @@ class Settings:
     # Cookie settings
     COOKIE_NAME: str = "token"
     COOKIE_MAX_AGE: int = 86400  # 24 hours in seconds
-    COOKIE_SECURE: bool = False  # Must be False for localhost development
+    # If FRONTEND_URL uses HTTPS (prod), require Secure and SameSite=None for cross-site cookies
+    COOKIE_SECURE: bool = os.getenv("COOKIE_SECURE", "").lower() == "true" or (
+        FRONTEND_URL.startswith("https") and not DEBUG
+    )
     COOKIE_HTTP_ONLY: bool = True
-    COOKIE_SAME_SITE: str = "lax"  # "lax" allows cookies across localhost/127.0.0.1
+    COOKIE_SAME_SITE: str = os.getenv("COOKIE_SAME_SITE", "") or (
+        "none" if COOKIE_SECURE else "lax"
+    )
 
     def validate(self) -> None:
         """Validate required settings are present."""
