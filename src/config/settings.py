@@ -29,6 +29,7 @@ class Settings:
     CORS_ORIGINS: list[str] = [
         "http://localhost:3000",  # Next.js frontend default port
         "http://127.0.0.1:3000",
+        "https://frontend-todo-eight.vercel.app",
     ]
 
     # Cookie settings
